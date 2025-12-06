@@ -1,0 +1,77 @@
+# T 配置文件
+# 复制此文件为 config.toml 并填入你的配置
+
+[general]
+# 默认目标语言
+default_target_language = "en"
+# 默认源语言 (auto 为自动检测)
+default_source_language = "auto"
+# 是否启用翻译历史记录
+enable_history = true
+# 历史记录最大条数
+max_history_size = 100
+
+[translation]
+# 翻译模式: "api" 或 "ai"
+default_mode = "api"
+# 难词解释来源: "dictionary" 或 "ai"
+word_explanation_source = "dictionary"
+# 是否显示音标
+show_phonetics = true
+# 是否显示例句
+show_examples = true
+# 例句数量
+example_count = 2
+
+[api]
+# 免费翻译 API 提供商 (libretranslate, mymemory, google)
+provider = "libretranslate"
+# LibreTranslate API 地址 (可使用官方实例或自建)
+libretranslate_url = "https://libretranslate.com/translate"
+# MyMemory API 密钥 (可选，提高配额)
+mymemory_api_key = ""
+
+[ai]
+# AI 提供商列表 (按优先级排序)
+# 支持: claude, openai, cohere, huggingface
+providers = ["claude", "cohere"]
+
+# Claude API 配置
+[ai.claude]
+api_key = ""
+model = "claude-sonnet-4-5-20250929"
+api_url = "https://api.anthropic.com/v1/messages"
+max_tokens = 2000
+
+# OpenAI API 配置 (备用)
+[ai.openai]
+api_key = ""
+model = "gpt-3.5-turbo"
+api_url = "https://api.openai.com/v1/chat/completions"
+
+# Cohere API 配置 (备用，有免费额度)
+[ai.cohere]
+api_key = ""
+model = "command"
+api_url = "https://api.cohere.ai/v1/generate"
+
+# Ollama 本地模型配置
+[ai.ollama]
+enabled = false
+base_url = "http://localhost:11434"
+model = "llama3"
+# 可选模型列表: llama3, mistral, codellama, etc.
+
+[dictionary]
+# 字典 API 提供商
+provider = "free-dictionary"
+# Free Dictionary API
+free_dictionary_url = "https://api.dictionaryapi.dev/api/v2/entries"
+
+[output]
+# 输出颜色主题: "default", "dark", "light"
+color_theme = "default"
+# 是否显示表格边框
+show_table_borders = true
+# 是否显示翻译时间
+show_translation_time = true
