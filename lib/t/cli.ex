@@ -246,7 +246,7 @@ defmodule T.CLI do
       • Local mode requires Ollama running locally
       • History is saved automatically in ~/.t/
 
-    #{IO.ANSI.cyan()}For more information, visit: https://github.com/yourusername/t#{IO.ANSI.reset()}
+    #{IO.ANSI.cyan()}For more information, visit: https://github.com/i0Ek3/t#{IO.ANSI.reset()}
     """
 
     IO.puts(help_text)
@@ -268,7 +268,7 @@ defmodule T.CLI do
     • Translation history and statistics
     • Beautiful CLI output
 
-    #{IO.ANSI.cyan()}https://github.com/yourusername/t#{IO.ANSI.reset()}
+    #{IO.ANSI.cyan()}https://github.com/i0Ek3/t#{IO.ANSI.reset()}
     """
 
     IO.puts(version_text)
