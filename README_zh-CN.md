@@ -1,6 +1,6 @@
 # 🌍 t - 命令行翻译工具
 
-[English](#README.md)
+[English](https://github.com/i0Ek3/t/blob/main/README.md)
 
 一个功能强大的命令行翻译工具，使用 Elixir 构建。支持 60+ 种语言、AI 驱动的翻译、本地模型和精美的 CLI 输出。
 

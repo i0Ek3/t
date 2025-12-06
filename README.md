@@ -1,6 +1,6 @@
 # 🌍 t - A Translator CLI
 
-[Chinese](#README_zh-CN.md)
+[Chinese](https://github.com/i0Ek3/t/blob/main/README_zh-CN.md)
 
 A powerful, feature-rich command-line translation tool built with Elixir. Supports 60+ languages, AI-powered translation, local models, and beautiful CLI output.
 
