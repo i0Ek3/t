@@ -13,7 +13,7 @@ A powerful, feature-rich command-line translation tool built with Elixir. Suppor
 - 🤖 **AI-Powered** - Multiple AI providers (Claude, Cohere, OpenAI)
 - 💻 **Local Models** - Support for Ollama local models
 - 📚 **Word Explanations** - Get definitions, phonetics, and part of speech
-- 💡 **Example Sentences** - Learn with contextual examples
+- 💡 **Example Sentences** - Learn with contextual examples, required AI mode
 - 📜 **History Tracking** - Save and search translation history
 - 📊 **Statistics** - Track your translation usage
 - 🎨 **Beautiful Output** - Colorful, well-formatted CLI interface
@@ -182,12 +182,6 @@ t "sophisticated" --to=zh -ai=true --explain=ai
 ```bash
 # Use dictionary for word explanations
 t "complex sentence" --to=zh --explain=dictionary
-
-# Hide example sentences
-t 你好 --to=en --no-examples
-
-# Show example sentences (default)
-t Hello --to=zh --examples
 ```
 
 #### History Management
@@ -309,9 +303,6 @@ libretranslate_url = "http://localhost:5000/translate"
 ```bash
 # Get detailed word explanations
 t "serendipity" --to=zh --explain=ai
-
-# Practice with examples
-t 你好 --to=en --examples
 ```
 
 #### Development Work

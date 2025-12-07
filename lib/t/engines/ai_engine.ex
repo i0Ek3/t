@@ -6,7 +6,7 @@ defmodule T.Engines.AIEngine do
   require Logger
   alias T.{Config, Language}
 
-  @timeout 30_000
+  @timeout 60_000
 
   def translate(text, source_lang, target_lang, opts \\ []) do
     providers = Config.get_nested(["ai", "providers"], ["claude", "cohere"])
@@ -72,7 +72,16 @@ defmodule T.Engines.AIEngine do
   end
 
   def generate_examples(text, lang, count \\ 2) do
-    providers = Config.get_nested(["ai", "providers"], ["claude"])
+    providers = Config.get_nested(["ai", "providers"], ["claude", "openai", "cohere"])
+    ollama_enabled = Config.get_nested(["ai", "ollama", "enabled"], false)
+    
+    providers = 
+      if ollama_enabled and "ollama" not in providers do
+        providers ++ ["ollama"]
+      else
+        providers
+      end
+
     lang_name = Language.get_name(lang)
 
     Enum.find_value(providers, [], fn provider ->
@@ -399,6 +408,10 @@ defmodule T.Engines.AIEngine do
   defp generate_examples_with_provider(provider, text, lang_name, count) do
     case provider do
       "claude" -> generate_examples_with_claude(text, lang_name, count)
+      "openai" -> generate_examples_with_openai(text, lang_name, count)
+      "cohere" -> generate_examples_with_cohere(text, lang_name, count)
+      "ollama" -> generate_examples_with_ollama(text, lang_name, count)
+      "local" -> generate_examples_with_ollama(text, lang_name, count)
       _ -> {:error, "Provider not supported for examples"}
     end
   end
@@ -441,14 +454,140 @@ defmodule T.Engines.AIEngine do
             |> List.first(%{})
             |> Map.get("text", "")
 
-          case Jason.decode(text) do
-            {:ok, examples} when is_list(examples) -> {:ok, examples}
-            _ -> {:error, "Failed to parse examples"}
-          end
+          parse_examples_json(text)
 
         _ ->
           {:error, "AI request failed"}
       end
+    end
+  end
+
+  defp generate_examples_with_openai(text, lang_name, count) do
+    config = Config.get_nested(["ai", "openai"], %{})
+    api_key = Map.get(config, "api_key", "")
+
+    if api_key == "" do
+      {:error, "OpenAI API key not configured"}
+    else
+      url = Map.get(config, "api_url", "https://api.openai.com/v1/chat/completions")
+      model = Map.get(config, "model", "gpt-3.5-turbo")
+
+      prompt = """
+      Generate #{count} example sentences using the phrase "#{text}" in #{lang_name}.
+      Make them practical and natural.
+      Format as JSON array with objects containing: source (original sentence), translation (English translation).
+      """
+
+      body = %{
+        model: model,
+        messages: [
+          %{role: "user", content: prompt}
+        ],
+        temperature: 0.7
+      }
+
+      headers = [
+        {"Authorization", "Bearer #{api_key}"},
+        {"Content-Type", "application/json"}
+      ]
+
+      case Req.post(url, json: body, headers: headers, receive_timeout: @timeout) do
+        {:ok, %{status: 200, body: response}} ->
+          text =
+            response
+            |> get_in(["choices"])
+            |> List.first(%{})
+            |> get_in(["message", "content"]) || ""
+
+          parse_examples_json(text)
+
+        _ ->
+          {:error, "AI request failed"}
+      end
+    end
+  end
+
+  defp generate_examples_with_cohere(text, lang_name, count) do
+    config = Config.get_nested(["ai", "cohere"], %{})
+    api_key = Map.get(config, "api_key", "")
+
+    if api_key == "" do
+      {:error, "Cohere API key not configured"}
+    else
+      url = Map.get(config, "api_url", "https://api.cohere.ai/v1/chat")
+      model = Map.get(config, "model", "command")
+
+      prompt = """
+      Generate #{count} example sentences using the phrase "#{text}" in #{lang_name}.
+      Make them practical and natural.
+      Format as JSON array with objects containing: source (original sentence), translation (English translation).
+      Return ONLY the JSON array.
+      """
+
+      body = %{
+        model: model,
+        message: prompt,
+        temperature: 0.3
+      }
+
+      headers = [
+        {"Authorization", "Bearer #{api_key}"},
+        {"Content-Type", "application/json"}
+      ]
+
+      case Req.post(url, json: body, headers: headers, receive_timeout: @timeout) do
+        {:ok, %{status: 200, body: response}} ->
+          text = Map.get(response, "text", "")
+          parse_examples_json(text)
+
+        _ ->
+          {:error, "AI request failed"}
+      end
+    end
+  end
+
+  defp generate_examples_with_ollama(text, lang_name, count) do
+    config = Config.get_nested(["ai", "ollama"], %{})
+    base_url = Map.get(config, "base_url", "http://localhost:11434")
+    model = Map.get(config, "model", "llama3")
+
+    url = "#{base_url}/api/generate"
+
+    prompt = """
+    Generate #{count} example sentences using the phrase "#{text}" in #{lang_name}.
+    Make them practical and natural.
+    Format as JSON array with objects containing: source (original sentence), translation (English translation).
+    Return ONLY the JSON array, no other text.
+    """
+
+    body = %{
+      model: model,
+      prompt: prompt,
+      stream: false,
+      format: "json"
+    }
+
+    case Req.post(url, json: body, receive_timeout: @timeout) do
+      {:ok, %{status: 200, body: response}} ->
+        text = Map.get(response, "response", "")
+        parse_examples_json(text)
+
+      _ ->
+        {:error, "Ollama request failed"}
+    end
+  end
+
+  defp parse_examples_json(text) do
+    # Clean up text to find JSON array
+    json_text =
+      case Regex.run(~r/\[.*\]/s, text) do
+        [match] -> match
+        _ -> text
+      end
+
+    case Jason.decode(json_text) do
+      {:ok, examples} when is_list(examples) -> {:ok, examples}
+      _ -> {:error, "Failed to parse examples"}
     end
   end
 end

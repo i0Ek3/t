@@ -266,14 +266,26 @@ defmodule T.Translator do
   end
 
   defp get_dictionary_explanations(result) do
+    # Determine which text to explain. 
+    # If target is English, explain translated text.
+    # If source is English (or target is not English), explain source text.
+    # We prefer explaining English words as our dictionary provider is English-only.
+    
+    {text_to_explain, lang_for_lookup} = 
+      if result.target_lang == "en" do
+        {result.translated_text, "en"}
+      else
+        {result.source_text, "en"}
+      end
+
     # Extract difficult words (simple implementation: words longer than 6 letters)
-    words = extract_difficult_words(result.translated_text)
+    words = extract_difficult_words(text_to_explain)
 
     words
     # Maximum 3 difficult words
     |> Enum.take(3)
     |> Enum.flat_map(fn word ->
-      case DictionaryEngine.lookup(word, result.target_lang) do
+      case DictionaryEngine.lookup(word, lang_for_lookup) do
         {:ok, explanation} -> [explanation]
         {:error, _} -> []
       end
@@ -290,11 +302,18 @@ defmodule T.Translator do
   end
 
   defp extract_difficult_words(text) do
-    text
-    |> String.split(~r/[^\p{L}]+/u, trim: true)
-    |> Enum.filter(fn word -> String.length(word) > 6 end)
-    |> Enum.take(5)
-    |> Enum.uniq()
+    words =
+      text
+      |> String.split(~r/[^\p{L}]+/u, trim: true)
+
+    if length(words) == 1 do
+      words
+    else
+      words
+      |> Enum.filter(fn word -> String.length(word) > 6 end)
+      |> Enum.take(5)
+      |> Enum.uniq()
+    end
   end
 
   defp save_to_history(result) do

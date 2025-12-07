@@ -72,11 +72,11 @@ echo ""
 $TRANSLATE sophisticated -to=zh --explain=dictionary
 pause
 
-# 示例 6：不显示例句
-echo -e "${GREEN}Example 6: Translation without Examples${NC}"
-echo -e "${CYAN}Command:${NC} $TRANSLATE 你好 -to=en --no-examples"
+# 示例 6：使用 AI 解释
+echo -e "${GREEN}Example 6: Translation with AI Explanations${NC}"
+echo -e "${CYAN}Command:${NC} $TRANSLATE sophisticated -to=zh --explain=ai"
 echo ""
-$TRANSLATE 你好 -to=en --no-examples
+$TRANSLATE sophisticated -to=zh --explain=ai
 pause
 
 # 示例 7：查看支持的语言

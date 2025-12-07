@@ -36,7 +36,7 @@ defmodule T.CLI do
           from: :string,
           ai: :string,
           explain: :string,
-          examples: :boolean,
+          
           history: :boolean,
           stats: :boolean,
           clear: :boolean,
@@ -95,7 +95,7 @@ defmodule T.CLI do
     source_lang = Keyword.get(opts, :from, "auto")
     ai_mode = Keyword.get(opts, :ai)
     explain_source = Keyword.get(opts, :explain, "auto")
-    show_examples = Keyword.get(opts, :examples, true)
+    show_examples = Keyword.has_key?(opts, :ai)
 
     if !target_lang do
       Output.print_error("Target language is required. Use -to=<lang_code> or --to=<lang_code>")
@@ -173,7 +173,7 @@ defmodule T.CLI do
     #{IO.ANSI.cyan()}#{IO.ANSI.bright()}
     ╔═══════════════════════════════════════════════════════════════════════════╗
     ║                    t TRANSLATOR - Command Line Tool                       ║
-    ║                           Version 0.1.0                                   ║
+    ║                           Version 0.2.0                                   ║
     ╚═══════════════════════════════════════════════════════════════════════════╝
     #{IO.ANSI.reset()}
 
@@ -194,9 +194,6 @@ defmodule T.CLI do
       #{IO.ANSI.green()}-from, --from <lang>#{IO.ANSI.reset()}          Source language (default: auto)
       #{IO.ANSI.green()}-ai <mode>#{IO.ANSI.reset()}                    AI mode: true | local
       #{IO.ANSI.green()}--explain <source>#{IO.ANSI.reset()}            Explanation source: dictionary | ai | auto
-      #{IO.ANSI.green()}--examples#{IO.ANSI.reset()}                    Show example sentences (default: true)
-      #{IO.ANSI.green()}--no-examples#{IO.ANSI.reset()}                 Hide example sentences
-
     #{IO.ANSI.yellow()}HISTORY & STATS:#{IO.ANSI.reset()}
       #{IO.ANSI.green()}--history [n]#{IO.ANSI.reset()}                 Show last n translations (default: 10)
       #{IO.ANSI.green()}--search <query>#{IO.ANSI.reset()}              Search translation history
@@ -255,7 +252,7 @@ defmodule T.CLI do
   defp show_version do
     version_text = """
     #{IO.ANSI.cyan()}#{IO.ANSI.bright()}
-    t v0.1.0
+    t v0.2.0
     #{IO.ANSI.reset()}
 
     Built with Elixir #{System.version()}

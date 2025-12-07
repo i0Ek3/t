@@ -9,11 +9,9 @@ defmodule T.Output do
   Print translation result
   """
   def print_translation(result) do
+    # Source text
     IO.puts("\n#{separator("=")}")
     print_header("📝 Translation Result")
-    IO.puts(separator("="))
-
-    # Source text
     print_section("Source", result.source_lang)
     IO.puts("  #{colorize(result.source_text, :cyan)}")
 
