@@ -43,10 +43,10 @@ echo ""
 
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     if [ -w "/usr/local/bin" ]; then
-        cp t /usr/local/bin/
+        mv t /usr/local/bin/
         echo "✓ Installed to /usr/local/bin/t"
     else
-        sudo cp t /usr/local/bin/
+        sudo mv t /usr/local/bin/
         echo "✓ Installed to /usr/local/bin/t (requires sudo)"
     fi
     echo ""

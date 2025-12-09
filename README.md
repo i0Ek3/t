@@ -57,6 +57,7 @@ cd t
 
 #### 2. Install dependencies & Build the executable
 
+**Linux/macOS:**
 ```bash
 ./install.sh 
 
@@ -64,7 +65,20 @@ cd t
 make install
 ```
 
-#### 4. (Optional) Add to PATH
+**Windows:**
+```cmd
+REM Using batch script
+install.bat
+
+REM Or using Make (if installed)
+make install
+
+REM Or manually
+mix deps.get
+mix escript.build
+```
+
+#### 3. (Optional) Add to PATH
 
 **Linux/macOS:**
 ```bash
@@ -75,7 +89,18 @@ source ~/.bashrc
 ```
 
 **Windows:**
-Add the project directory to your PATH environment variable.
+Add the executable to PATH:
+1. Press `Win + X` and select "System"
+2. Click "Advanced system settings"
+3. Click "Environment Variables"
+4. Under "User variables", select "Path" and click "Edit"
+5. Click "New" and add the project directory path
+6. Click "OK" to save
+
+Or run directly from the project directory:
+```cmd
+t.exe --help
+```
 
 ### ⚙️ Configuration
 
@@ -150,6 +175,8 @@ model = "llama3"  # or "mistral", "codellama", etc.
 ```
 
 ### 📖 Usage
+
+> **Note for Windows users**: On Windows, use `t.exe` instead of `t`. For example: `t.exe "Hello" --to=zh`
 
 #### Basic Translation
 
@@ -400,11 +427,11 @@ t/
 
 ### 📝 TODO
 
+- [x] Support for more AI providers
 - [ ] Add pronunciation/audio support
 - [ ] Support batch translation from files
 - [ ] Add more dictionary APIs
 - [ ] Implement caching for repeated translations
-- [ ] Support for more AI providers
 
 ### 📄 License
 

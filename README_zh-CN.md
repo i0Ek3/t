@@ -13,7 +13,7 @@
 - 🤖 **AI 驱动** - 多个 AI 提供商（Claude、Cohere、OpenAI）
 - 💻 **本地模型** - 支持 Ollama 本地模型
 - 📚 **单词解释** - 获取定义、音标和词性
-- 💡 **例句** - 通过上下文例句学习
+- 💡 **例句** - 通过上下文例句学习，需 AI 支持
 - 📜 **历史追踪** - 保存和搜索翻译历史
 - 📊 **统计** - 跟踪您的翻译使用情况
 - 🎨 **精美输出** - 彩色、格式良好的 CLI 界面
@@ -57,11 +57,25 @@ cd t
 
 #### 2. 安装依赖并构建可执行文件
 
+**Linux/macOS:**
 ```bash
 ./install.sh
 
 # 或者
 make install
+```
+
+**Windows:**
+```cmd
+REM 使用批处理脚本
+install.bat
+
+REM 或者使用 Make（如果已安装）
+make install
+
+REM 或者手动构建
+mix deps.get
+mix escript.build
 ```
 
 #### 3. （可选）添加到 PATH
@@ -75,7 +89,18 @@ source ~/.bashrc
 ```
 
 **Windows:**
-将项目目录添加到 PATH 环境变量。
+将可执行文件添加到 PATH：
+1. 按 `Win + X` 选择"系统"
+2. 点击"高级系统设置"
+3. 点击"环境变量"
+4. 在"用户变量"下，选择"Path"并点击"编辑"
+5. 点击"新建"并添加项目目录路径
+6. 点击"确定"保存
+
+或者直接在项目目录中运行：
+```cmd
+t.exe --help
+```
 
 ### ⚙️ 配置
 
@@ -150,6 +175,8 @@ model = "llama3"  # 或 "mistral"、"codellama" 等
 ```
 
 ### 📖 使用方法
+
+> **Windows 用户注意**: 在 Windows 上，使用 `t.exe` 而不是 `t`。例如：`t.exe "Hello" --to=zh`
 
 #### 基本翻译
 
